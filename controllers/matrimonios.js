@@ -4,13 +4,16 @@ const { Matrimonio } = require("../models");
 //Lista de Matrimonios
 const getMatrimonios = async (req = request, res = response) => {
   const { limite = 5, desde = 0 } = req.query;
-  const query = { estado: true };
+  const query = { activo: true };
   const [total, matrimonios] = await Promise.all([
     Matrimonio.countDocuments(query),
     Matrimonio.find(query)
       .skip(Number(desde))
       .limit(Number(limite))
-      .populate("usuario", "nombre"),
+      .populate("usuario", "nombre")
+      .populate("diocesis", "nombre")
+      .populate("esposo")
+      .populate("esposa"),
   ]);
   res.status(200).json({
     ok: true,
@@ -22,10 +25,11 @@ const getMatrimonios = async (req = request, res = response) => {
 //Obtener una Categoría por ID - público
 const getMatrimoniobyID = async (req = request, res = response) => {
   const { id } = req.params;
-  const matrimonioDB = await Matrimonio.findById(id).populate(
-    "usuario",
-    "nombre"
-  );
+  const matrimonioDB = await Matrimonio.findById(id)
+    .populate("usuario", "nombre")
+    .populate("diocesis", "nombre")
+    .populate("esposo")
+    .populate("esposa");
   res.status(200).json({
     ok: true,
     msg: "Matrimonio",
@@ -34,16 +38,20 @@ const getMatrimoniobyID = async (req = request, res = response) => {
 };
 
 const postMatrimonio = async (req = request, res = response) => {
-  const nombre = req.body.nombre.toUpperCase();
-  const matrimonioDB = await Matrimonio.findOne({ nombre });
+  const { esposo, esposa, diocesis } = req.body;
+  const nombrematrimonio = req.body.nombrematrimonio.toUpperCase();
+  const matrimonioDB = await Matrimonio.findOne({ nombrematrimonio });
   if (matrimonioDB) {
     return res.status(400).json({
       ok: false,
-      msg: `El Matrimonio ${matrimonioDB.nombre} ya existe`,
+      msg: `El Matrimonio ${matrimonioDB.nombrematrimonio} ya existe`,
     });
   }
   const data = {
-    nombre,
+    nombrematrimonio,
+    esposo,
+    esposa,
+    diocesis,
     usuario: req.usuario._id,
   };
   const matrimonio = new Matrimonio(data);

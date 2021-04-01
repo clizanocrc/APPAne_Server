@@ -30,7 +30,15 @@ router.post(
   "/",
   [
     validarJWT,
-    check("nombre", "El nombre es obligatorio").not().isEmpty(),
+    check("nombrematrimonio", "El nombre del matrimonio es obligatorio")
+      .not()
+      .isEmpty(),
+    check("esposa", "La dato de la esposa es Obligatorio").not().isEmpty(),
+    check("esposa", "No es un ID válido").isMongoId(),
+    check("esposo", "La dato del esposo es Obligatorio").not().isEmpty(),
+    check("esposo", "No es un ID válido").isMongoId(),
+    check("diocesis", "La diócesis es obligatoria").not().isEmpty(),
+    check("diocesis", "No es un ID válido").isMongoId(),
     validarCampos,
   ],
   postMatrimonio

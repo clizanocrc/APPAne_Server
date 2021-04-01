@@ -1,7 +1,7 @@
 const { Schema, model } = require("mongoose");
 
 const MatrimonioSchema = Schema({
-  matrimonio: {
+  nombrematrimonio: {
     type: String,
     required: [true, "El nombre del Matrimonio es obligatorio"],
   },
@@ -15,7 +15,7 @@ const MatrimonioSchema = Schema({
   },
   images: {
     type: String,
-    default: {},
+    default: "",
   },
   fechaMatrimonio: {
     type: Date,
@@ -49,12 +49,12 @@ const MatrimonioSchema = Schema({
   },
   esposo: {
     type: Schema.Types.ObjectId,
-    ref: "Conyuge",
+    ref: "Conyuges",
     required: true,
   },
   esposa: {
     type: Schema.Types.ObjectId,
-    ref: "Conyuge",
+    ref: "Conyuges",
     required: true,
   },
   usuario: {
@@ -65,7 +65,9 @@ const MatrimonioSchema = Schema({
 });
 
 MatrimonioSchema.methods.toJSON = function () {
-  const { __v, _id, estado, ...matrimonio } = this.toObject();
+  const { __v, _id, estado, diocesis, ...matrimonio } = this.toObject();
+  const { nombre } = diocesis;
+  matrimonio.diocesis = nombre;
   matrimonio.id = _id;
   return matrimonio;
 };

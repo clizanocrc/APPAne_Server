@@ -9,6 +9,10 @@ const ConyugesSchema = Schema({
     type: String,
     required: [true, "El apellido es requerido"],
   },
+  genero: {
+    type: String,
+    required: [true, "El género es requerido"],
+  },
   telefono: {
     type: String,
     default: "",

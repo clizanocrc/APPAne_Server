@@ -46,6 +46,7 @@ const postConyuge = async (req = request, res = response) => {
     nombre: body.nombre.toUpperCase(),
     usuario: req.usuario._id,
   };
+  console.log(data);
   const conyuge = new Conyuges(data);
   await conyuge.save();
   return res.status(201).json({

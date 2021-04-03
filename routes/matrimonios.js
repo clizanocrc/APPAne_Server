@@ -7,7 +7,7 @@ const {
   putMatrimonio,
   deleteMatrimonio,
 } = require("../controllers");
-const { existeMatrimonioID } = require("../helpers");
+const { existeMatrimonioID, validaBloque } = require("../helpers");
 
 const { validarJWT, validarCampos, esAdminRole } = require("../middlewares");
 
@@ -39,6 +39,7 @@ router.post(
     check("esposo", "No es un ID válido").isMongoId(),
     check("diocesis", "La diócesis es obligatoria").not().isEmpty(),
     check("diocesis", "No es un ID válido").isMongoId(),
+    check("bloque").custom(validaBloque),
     validarCampos,
   ],
   postMatrimonio

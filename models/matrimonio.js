@@ -38,14 +38,14 @@ const MatrimonioSchema = Schema({
     default: "Primero",
     emun: ["Primero", "Segundo", "Tercero"],
   },
+  esMatrimonio: {
+    type: Boolean,
+    default: true,
+  },
   diocesis: {
     type: Schema.Types.ObjectId,
     ref: "Diocesis",
     required: true,
-  },
-  esMatrimonio: {
-    type: Boolean,
-    default: true,
   },
   esposo: {
     type: Schema.Types.ObjectId,

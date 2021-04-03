@@ -1,5 +1,5 @@
 const { request, response } = require("express");
-const { Matrimonio } = require("../models");
+const { Matrimonio, Conyuges } = require("../models");
 
 //Lista de Matrimonios
 const getMatrimonios = async (req = request, res = response) => {
@@ -38,28 +38,36 @@ const getMatrimoniobyID = async (req = request, res = response) => {
 };
 
 const postMatrimonio = async (req = request, res = response) => {
-  const { esposo, esposa, diocesis } = req.body;
-  const nombrematrimonio = req.body.nombrematrimonio.toUpperCase();
-  const matrimonioDB = await Matrimonio.findOne({ nombrematrimonio });
-  if (matrimonioDB) {
+  const { esposo, esposa, ...resto } = req.body;
+  const matrimonioDB = await Matrimonio.find({
+    $or: [{ esposo }, { esposa }],
+  });
+  if (matrimonioDB.length !== 0) {
     return res.status(400).json({
       ok: false,
-      msg: `El Matrimonio ${matrimonioDB.nombrematrimonio} ya existe`,
+      msg: `Alguno de los cónyuges ya se encuentra registrado`,
     });
   }
   const data = {
-    nombrematrimonio,
+    ...resto,
     esposo,
     esposa,
-    diocesis,
     usuario: req.usuario._id,
   };
   const matrimonio = new Matrimonio(data);
   await matrimonio.save();
+  await Promise.all([
+    Conyuges.findByIdAndUpdate(esposo, {
+      idMatrimonio: matrimonio.id,
+    }),
 
+    Conyuges.findByIdAndUpdate(esposa, {
+      idMatrimonio: matrimonio.id,
+    }),
+  ]);
   return res.status(201).json({
     ok: true,
-    msg: "matrimonio Creado ",
+    msg: "Matrimonio Creado ",
     matrimonio,
   });
 };

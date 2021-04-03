@@ -1,63 +1,43 @@
-const fs = require("fs");
 const cloudinary = require("cloudinary").v2;
 cloudinary.config(process.env.CLOUDINARY_URL);
 
-const {
-  imgExtensionesValidas,
-  pathImg,
-  pathImagenDefault,
-  retornarModelo,
-  eliminarImgClodinary,
-  subirArchivoClodinary,
-} = require("../helpers");
-
-const cargarArchivoCloudinary = async (req = request, res = response) => {
-  //para dejar los tipos de archivo por defecto enviar undefine en el arreglo de imagenes permitidas
-  const respuesta = await subirArchivo(
-    req.files,
-    imgExtensionesValidas,
-    "textos"
-  ).catch((resp) => {
-    return res.status(400).json(resp);
-  });
-  res.status(200).json(respuesta);
-};
+const { retornarModelo, imgExtensionesValidas } = require("../helpers");
 
 const actualizarImagenCloudinary = async (req = request, res = response) => {
+  const { archivo } = req.files;
+  const nombreCortado = archivo.name.split(".");
+  const extension = nombreCortado[nombreCortado.length - 1];
+
+  if (!imgExtensionesValidas.includes(extension)) {
+    return res.status(400).json({
+      ok: false,
+      msg: "Tipo de archivo no permitido",
+      validos: imgExtensionesValidas,
+    });
+  }
+
   let modelo = await retornarModelo(req, res);
-  // TODO: Limpiar imagenes previas de Cloudinary
-  if (modelo.img) {
-    const nombreArr = modelo.img.split("/");
+  const { coleccion } = req.params;
+  if (modelo.images) {
+    const nombreArr = modelo.images.split("/");
     const nombre = nombreArr[nombreArr.length - 1];
     const [public_id] = nombre.split(".");
     cloudinary.uploader.destroy(public_id);
   }
   const { tempFilePath } = req.files.archivo;
-  const { secure_url } = await cloudinary.uploader.upload(tempFilePath);
+  const { secure_url } = await cloudinary.uploader.upload(tempFilePath, {
+    folder: `APPAne/${coleccion}`,
+  });
 
-  modelo.img = secure_url;
+  modelo.images = secure_url;
   await modelo.save();
-
   res.status(200).json({
     ok: true,
-    msg: "Archivo subido a Cloudinary",
+    msg: "Imagen Actualizada",
     modelo,
   });
 };
 
-const enviarImgCloudinary = async (req = request, res = response) => {
-  const { coleccion } = req.params;
-  let modelo = await retornarModelo(req, res);
-  if (modelo.img) {
-    const pathImagen = pathImg(coleccion, modelo.img);
-    if (fs.existsSync(pathImagen)) {
-      return res.sendFile(pathImagen);
-    }
-  }
-  res.sendFile(pathImagenDefault());
-};
 module.exports = {
-  cargarArchivoCloudinary,
   actualizarImagenCloudinary,
-  enviarImgCloudinary,
 };

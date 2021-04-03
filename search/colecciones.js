@@ -6,4 +6,7 @@ const coleccionesSearch = [
   "prodxcate",
 ];
 
-module.exports = { coleccionesSearch };
+const generos = ["F", "M"];
+const bloques = ["Primero", "Segundo", "Tercero"];
+
+module.exports = { coleccionesSearch, generos, bloques };

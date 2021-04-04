@@ -30,6 +30,12 @@ const getMatrimoniobyID = async (req = request, res = response) => {
     .populate("diocesis", "nombre")
     .populate("esposo")
     .populate("esposa");
+  if (!matrimonioDB.activo) {
+    return res.status(400).json({
+      ok: false,
+      msg: "Matrimonio Inactivo",
+    });
+  }
   res.status(200).json({
     ok: true,
     msg: "Matrimonio",
@@ -74,16 +80,20 @@ const postMatrimonio = async (req = request, res = response) => {
 
 const putMatrimonio = async (req = request, res = response) => {
   const { id } = req.params;
-  const { estado, usuario, ...data } = req.body;
-  data.nombre = data.nombre.toUpperCase();
-  data.usuario = req.usuario._id;
+  const { esposo, esposa, activo, ...resto } = req.body;
+
+  const data = {
+    ...resto,
+    usuario: req.usuario._id,
+  };
+
   const matrimonio = await Matrimonio.findByIdAndUpdate(id, data, {
     new: true,
   });
   res.status(200).json({
     ok: true,
     msg: "Matrimonio actualizado",
-    categoria,
+    matrimonio,
   });
 };
 
@@ -92,7 +102,7 @@ const deleteMatrimonio = async (req = request, res = response) => {
   const matrimonio = await Matrimonio.findByIdAndUpdate(
     id,
     {
-      estado: false,
+      activo: false,
       usuario: req.usuario._id,
     },
     { new: true }

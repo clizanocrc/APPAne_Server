@@ -10,10 +10,12 @@ class Server {
     //variables
     this.port = process.env.PORT;
     this.paths = {
+      _1010: "/api/1010",
       auth: "/api/auth",
       conyuges: "/api/conyuges",
       diocesis: "/api/diocesis",
       matrimonios: "/api/matrimonios",
+      parametros: "/api/parametros",
       search: "/api/search",
       uploads: "/api/uploads",
       usuarios: "/api/usuarios",
@@ -50,10 +52,12 @@ class Server {
   //metodos
   routes() {
     //Rutas
+    this.app.use(this.paths._1010, require("../routes/1010"));
     this.app.use(this.paths.auth, require("../routes/auth"));
     this.app.use(this.paths.conyuges, require("../routes/conyuges"));
-    this.app.use(this.paths.matrimonios, require("../routes/matrimonios"));
     this.app.use(this.paths.diocesis, require("../routes/diocesis"));
+    this.app.use(this.paths.matrimonios, require("../routes/matrimonios"));
+    this.app.use(this.paths.parametros, require("../routes/params"));
     this.app.use(this.paths.search, require("../routes/search"));
     this.app.use(this.paths.uploads, require("../routes/uploads"));
     this.app.use(this.paths.usuarios, require("../routes/usuarios"));

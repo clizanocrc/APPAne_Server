@@ -1,7 +1,11 @@
 const cloudinary = require("cloudinary").v2;
 cloudinary.config(process.env.CLOUDINARY_URL);
 
-const { retornarModelo, imgExtensionesValidas } = require("../helpers");
+const {
+  retornarModelo,
+  imgExtensionesValidas,
+  pathCloudinary,
+} = require("../helpers");
 
 const actualizarImagenCloudinary = async (req = request, res = response) => {
   const { archivo } = req.files;
@@ -22,11 +26,11 @@ const actualizarImagenCloudinary = async (req = request, res = response) => {
     const nombreArr = modelo.images.split("/");
     const nombre = nombreArr[nombreArr.length - 1];
     const [public_id] = nombre.split(".");
-    cloudinary.uploader.destroy(public_id);
+    cloudinary.uploader.destroy(`${pathCloudinary}/${coleccion}/${public_id}`);
   }
   const { tempFilePath } = req.files.archivo;
   const { secure_url } = await cloudinary.uploader.upload(tempFilePath, {
-    folder: `APPAne/${coleccion}`,
+    folder: `${pathCloudinary}/${coleccion}`,
   });
 
   modelo.images = secure_url;

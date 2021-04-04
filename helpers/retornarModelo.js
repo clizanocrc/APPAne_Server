@@ -1,5 +1,5 @@
 const { request, response } = require("express");
-const { Usuario, Matrimonio, Conyuges } = require("../models");
+const { Usuario, Matrimonio, Conyuges, _1010 } = require("../models");
 
 const retornarModelo = async (req = request, res = response) => {
   const { coleccion, id } = req.params;
@@ -28,7 +28,16 @@ const retornarModelo = async (req = request, res = response) => {
       if (!modelo) {
         return res.status(400).json({
           ok: false,
-          msg: `Producto con id: ${id} no existe`,
+          msg: `Usuario con id: ${id} no existe`,
+        });
+      }
+      break;
+    case "1010":
+      modelo = await _1010.findById(id);
+      if (!modelo) {
+        return res.status(400).json({
+          ok: false,
+          msg: `1010 con id: ${id} no existe`,
         });
       }
       break;

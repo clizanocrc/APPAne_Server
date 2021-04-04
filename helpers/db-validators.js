@@ -1,4 +1,11 @@
-const { Usuario, Role, Diocesis, Matrimonio, Conyuges } = require("../models");
+const {
+  Usuario,
+  Role,
+  Diocesis,
+  Matrimonio,
+  Conyuges,
+  _1010,
+} = require("../models");
 const { generos, bloques } = require("../search/colecciones");
 
 const validaRol = async (rol = "") => {
@@ -53,6 +60,13 @@ const existeDiocesisID = async (id = "") => {
   }
 };
 
+const existe1010ID = async (id = "") => {
+  const _1010Id = await _1010.findById(id);
+  if (!_1010Id) {
+    throw new Error(`El 1010 no Existe, id: ${id}`);
+  }
+};
+
 const coleccionesPermitidas = (coleccion = "", colecciones = []) => {
   return colecciones.includes(coleccion);
 };
@@ -83,6 +97,7 @@ const validaBloque = (bloque = "") => {
 
 module.exports = {
   validaRol,
+  existe1010ID,
   existeCorreo,
   existeDiocesisID,
   existeMatrimonioID,

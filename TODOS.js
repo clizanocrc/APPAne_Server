@@ -4,13 +4,9 @@
 
 //CRUD Conyuge
 
-//TODO: CRUD Matrimonio
-// Falta trabajar el post
-// Insertar primero a los conyuges
-// Insertar al matrimonio haciendo referencia a los conyuges creados
-// Actualizar los conyugues con el ID del matrimonio
+//CRUD Matrimonio
 
-//TODO: CRUD Parametros
+//CRUD Parametros
 
 //TODO: CRUD 1010
 

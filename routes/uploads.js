@@ -8,6 +8,7 @@ const {
   validarArchivos,
   validarCampos,
 } = require("../middlewares");
+const { colecciones } = require("../search/colecciones");
 
 const router = Router();
 
@@ -17,7 +18,7 @@ router.put(
     validarJWT,
     validarArchivos,
     check("coleccion", "No es una colección válido").custom((c) =>
-      coleccionesPermitidas(c, ["matrimonios", "conyuges"])
+      coleccionesPermitidas(c, colecciones)
     ),
     check("id", "No es un ID válido").isMongoId(),
     validarCampos,

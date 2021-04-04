@@ -49,9 +49,12 @@ router.put(
   "/:id",
   [
     validarJWT,
-    check("nombre", "El nombre es obligatorio").not().isEmpty(),
+    check("nombrematrimonio", "El nombre es obligatorio").not().isEmpty(),
     check("id", "No es un ID válido").isMongoId(),
     check("id").custom(existeMatrimonioID),
+    check("diocesis", "La diócesis es obligatoria").not().isEmpty(),
+    check("diocesis", "No es un ID válido").isMongoId(),
+    check("bloque").custom(validaBloque),
     validarCampos,
   ],
   putMatrimonio

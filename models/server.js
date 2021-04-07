@@ -14,10 +14,12 @@ class Server {
       auth: "/api/auth",
       conyuges: "/api/conyuges",
       diocesis: "/api/diocesis",
+      documentos: "/api/documentos",
       matrimonios: "/api/matrimonios",
       parametros: "/api/parametros",
       search: "/api/search",
-      uploads: "/api/uploads",
+      uploadsimg: "/api/uploadsimg",
+      uploadsfile: "/api/uploadsfile",
       usuarios: "/api/usuarios",
     };
     //Conectar Base de Datos
@@ -56,10 +58,12 @@ class Server {
     this.app.use(this.paths.auth, require("../routes/auth"));
     this.app.use(this.paths.conyuges, require("../routes/conyuges"));
     this.app.use(this.paths.diocesis, require("../routes/diocesis"));
+    this.app.use(this.paths.documentos, require("../routes/documentos"));
     this.app.use(this.paths.matrimonios, require("../routes/matrimonios"));
     this.app.use(this.paths.parametros, require("../routes/params"));
     this.app.use(this.paths.search, require("../routes/search"));
-    this.app.use(this.paths.uploads, require("../routes/uploads"));
+    this.app.use(this.paths.uploadsimg, require("../routes/uploadsimg"));
+    this.app.use(this.paths.uploadsfile, require("../routes/uploadsfile"));
     this.app.use(this.paths.usuarios, require("../routes/usuarios"));
   }
 

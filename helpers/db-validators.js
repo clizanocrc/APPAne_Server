@@ -5,13 +5,14 @@ const {
   Matrimonio,
   Conyuges,
   _1010,
+  Documentos,
 } = require("../models");
 const { generos, bloques } = require("../search/colecciones");
 
 const validaRol = async (rol = "") => {
   const existeRol = await Role.findOne({ rol });
   if (!existeRol) {
-    throw new Error(`El rol ${rol}, No es un rol válido`);
+    throw new Error(`El rol: ${rol}, No es un rol válido`);
   }
 };
 
@@ -60,6 +61,13 @@ const existeDiocesisID = async (id = "") => {
   }
 };
 
+const existeDocumentoID = async (id = "") => {
+  const documentoId = await Documentos.findById(id);
+  if (!documentoId) {
+    throw new Error(`El Documento no Existe, id: ${id}`);
+  }
+};
+
 const existe1010ID = async (id = "") => {
   const _1010Id = await _1010.findById(id);
   if (!_1010Id) {
@@ -100,6 +108,7 @@ module.exports = {
   existe1010ID,
   existeCorreo,
   existeDiocesisID,
+  existeDocumentoID,
   existeMatrimonioID,
   existeUsuarioID,
   existeUsuarioDB,

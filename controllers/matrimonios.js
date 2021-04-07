@@ -73,7 +73,7 @@ const postMatrimonio = async (req = request, res = response) => {
   ]);
   return res.status(201).json({
     ok: true,
-    msg: "Matrimonio Creado ",
+    msg: "Matrimonio Creado",
     matrimonio,
   });
 };

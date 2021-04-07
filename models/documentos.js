@@ -1,15 +1,11 @@
 const { Schema, model } = require("mongoose");
 
-const DocumentosSchema = Schema({
+const DocumentoSchema = Schema({
   titulo: {
     type: String,
     required: [true, "El título es obligatorio"],
   },
   mensaje: {
-    type: String,
-    default: "",
-  },
-  images: {
     type: String,
     default: "",
   },
@@ -29,10 +25,10 @@ const DocumentosSchema = Schema({
   },
 });
 
-DocumentosSchema.methods.toJSON = function () {
+DocumentoSchema.methods.toJSON = function () {
   const { __v, _id, estado, ...documentos } = this.toObject();
   documentos.id = _id;
   return documentos;
 };
 
-module.exports = model("Documentos", DocumentosSchema);
+module.exports = model("Documento", DocumentoSchema);

@@ -8,8 +8,8 @@
 
 //CRUD Parametros
 
-//TODO: CRUD 1010
+//CRUD 1010
 
-//TODO: CRUD Documentos
+//CRUD Documentos
 
-//TODO: CRUD Mensajes
+//CRUD Mensajes

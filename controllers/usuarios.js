@@ -1,6 +1,6 @@
 const { request, response } = require("express");
 const { Usuario } = require("../models");
-const { encriptaPassword } = require("../helpers");
+const { encriptaPassword, generarJWT } = require("../helpers");
 
 const getUsuarios = async (req = request, res = response) => {
   //TODO: Validar si limite y desde son numeros
@@ -27,10 +27,13 @@ const postUsuarios = async (req = request, res = response) => {
   usuario.password = encriptaPassword(password);
   //Guardar en DB
   await usuario.save();
+  const token = await generarJWT(usuario.id);
+
   res.status(201).json({
     ok: true,
     msg: "Usuario Creado",
     usuario,
+    token,
   });
 };
 

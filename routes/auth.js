@@ -1,10 +1,12 @@
 const { Router } = require("express");
 const { check } = require("express-validator");
 
-const { validarCampos } = require("../middlewares");
-const { login, googleSingIn } = require("../controllers");
+const { validarCampos, validarJWT } = require("../middlewares");
+const { login, renovarToken } = require("../controllers");
 
 const router = Router();
+
+router.get("/", [validarJWT, validarCampos], renovarToken);
 
 router.post(
   "/login",

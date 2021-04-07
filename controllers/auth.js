@@ -16,7 +16,7 @@ const login = async (req = request, res = response) => {
     if (!usuario) {
       return res.status(400).json({
         ok: false,
-        msg: "Usuario / Password no son correctos - correo",
+        msg: "Usuario / Password no son correctos",
       });
     }
 
@@ -24,7 +24,7 @@ const login = async (req = request, res = response) => {
     if (!usuario.estado) {
       return res.status(400).json({
         ok: false,
-        msg: "Usuario / Password no son correctos - estado: inactivo",
+        msg: "Usuario estado: inactivo",
       });
     }
 
@@ -33,7 +33,7 @@ const login = async (req = request, res = response) => {
     if (!passwordValid) {
       return res.status(400).json({
         ok: false,
-        msg: "Usuario / Password no son correctos - password",
+        msg: "Usuario / Password no son correctos",
       });
     }
 
@@ -116,7 +116,22 @@ const googleSingIn = async (req = request, res = response) => {
   }
 };
 
+const renovarToken = async (req, res = response) => {
+  const { usuario } = req;
+
+  // Generar el JWT
+  const token = await generarJWT(usuario.id);
+
+  res.json({
+    ok: true,
+    msg: "Token Renovado",
+    usuario,
+    token,
+  });
+};
+
 module.exports = {
   login,
   googleSingIn,
+  renovarToken,
 };

@@ -8,7 +8,7 @@ const esAdminRole = (req = request, res = response, next) => {
     });
   }
   const { rol, nombre } = req.usuario;
-  if (rol !== "SUPER_ADMIN_ROLE") {
+  if (rol !== "SUPER_ADMIN_ROLE" || rol !== "ADMIN_ROLE") {
     return res.status(401).json({
       ok: false,
       msg: `El Usuario ${nombre}, no está autorizado para ejecutar esta acción`,

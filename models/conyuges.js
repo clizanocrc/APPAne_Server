@@ -7,7 +7,7 @@ const ConyugesSchema = Schema({
   },
   apellido: {
     type: String,
-    required: [true, "El apellido es requerido"],
+    default: "",
   },
   images: {
     type: String,

@@ -66,10 +66,17 @@ const MatrimonioSchema = Schema({
 
 MatrimonioSchema.methods.toJSON = function () {
   const { __v, _id, estado, diocesis, ...matrimonio } = this.toObject();
-  const { nombre } = diocesis;
+  const { nombre, _id: idDiocesis } = diocesis;
   matrimonio.diocesis = nombre;
+  matrimonio.diocesisid = idDiocesis;
   matrimonio.id = _id;
   return matrimonio;
 };
+
+// MatrimonioSchema.methods.toJSON = function () {
+//   const { __v, _id, estado, ...matrimonio } = this.toObject();
+//   matrimonio.id = _id;
+//   return matrimonio;
+// };
 
 module.exports = model("Matrimonio", MatrimonioSchema);

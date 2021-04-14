@@ -80,6 +80,9 @@ const coleccionesPermitidas = (coleccion = "", colecciones = []) => {
 };
 
 const existeEmailConyuge = async (email = "") => {
+  if (email.length === 0) {
+    return;
+  }
   const existeCorreo = await Conyuges.findOne({ email });
   if (existeCorreo) {
     throw new Error(`El correo ${email}, Ya esta registrado`);

@@ -9,7 +9,9 @@ const {
 } = require("../helpers");
 
 const actualizarImagenCloudinary = async (req = request, res = response) => {
+  console.log("Recibiendo Archivo");
   const { archivo } = req.files;
+  console.log(archivo);
   const nombreCortado = archivo.name.split(".");
   const extension = nombreCortado[nombreCortado.length - 1];
   if (!imgExtensionesValidas.includes(extension)) {

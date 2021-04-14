@@ -11,9 +11,9 @@ const getMatrimonios = async (req = request, res = response) => {
       .skip(Number(desde))
       .limit(Number(limite))
       .populate("usuario", "nombre")
-      .populate("diocesis", "nombre")
       .populate("esposo")
-      .populate("esposa"),
+      .populate("esposa")
+      .populate("diocesis"),
   ]);
   res.status(200).json({
     ok: true,
@@ -27,9 +27,9 @@ const getMatrimoniobyID = async (req = request, res = response) => {
   const { id } = req.params;
   const matrimonioDB = await Matrimonio.findById(id)
     .populate("usuario", "nombre")
-    .populate("diocesis", "nombre")
     .populate("esposo")
-    .populate("esposa");
+    .populate("esposa")
+    .populate("diocesis");
   if (!matrimonioDB.activo) {
     return res.status(400).json({
       ok: false,
@@ -39,7 +39,7 @@ const getMatrimoniobyID = async (req = request, res = response) => {
   res.status(200).json({
     ok: true,
     msg: "Matrimonio",
-    matrimonio: matrimonioDB,
+    data: matrimonioDB,
   });
 };
 
@@ -74,7 +74,7 @@ const postMatrimonio = async (req = request, res = response) => {
   return res.status(201).json({
     ok: true,
     msg: "Matrimonio Creado",
-    matrimonio,
+    data: matrimonio,
   });
 };
 

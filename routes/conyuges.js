@@ -27,9 +27,9 @@ router.post(
   [
     validarJWT,
     check("nombre", "El nombre es obligatorio").not().isEmpty(),
-    check("apellido", "El apellido es obligatorio").not().isEmpty(),
-    check("email", "El email es obligatorio").not().isEmpty(),
-    check("email", "El email debe ser válido").isEmail(),
+    // check("apellido", "El apellido es obligatorio").not().isEmpty(),
+    // check("email", "El email es obligatorio").not().isEmpty(),
+    // check("email", "El email debe ser válido").isEmail(),
     check("email").custom(existeEmailConyuge),
     check("genero", "El genero es obligatorio").not().isEmpty(),
     check("genero").custom(validaGenero),

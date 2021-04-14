@@ -5,13 +5,17 @@ const { encriptaPassword, generarJWT } = require("../helpers");
 const getUsuarios = async (req = request, res = response) => {
   //TODO: Validar si limite y desde son numeros
   const { limite = 5, desde = 0 } = req.query;
-  const query = { estado: true };
+  // const query = { estado: true };
   //Apilar las promesas para mejorar el rendimiento, las ejecuta simultaneamente
   //Se desestructura en un arreglo
   const [total, usuarios] = await Promise.all([
-    Usuario.countDocuments(query),
-    Usuario.find(query).skip(Number(desde)).limit(Number(limite)),
+    // Usuario.countDocuments(query),
+    // Usuario.find(query).skip(Number(desde)).limit(Number(limite)),
+
+    Usuario.countDocuments(),
+    Usuario.find().skip(Number(desde)).limit(Number(limite)),
   ]);
+  // console.log(usuarios);
   res.status(200).json({
     ok: true,
     msg: "Lista de Usuarios",

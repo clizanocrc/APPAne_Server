@@ -11,7 +11,7 @@ const getConyuges = async (req = request, res = response) => {
       .limit(Number(limite))
       .populate("usuario", "nombre"),
   ]);
-  console.log(conyuges);
+  // console.log(conyuges);
   res.status(200).json({
     ok: true,
     msg: "Lista de Cónyuges",
@@ -46,13 +46,15 @@ const postConyuge = async (req = request, res = response) => {
     nombre: body.nombre.toUpperCase(),
     usuario: req.usuario._id,
   };
-  console.log(data);
+  if (data.apellido) {
+    data.apellido = data.apellido.toUpperCase();
+  }
   const conyuge = new Conyuges(data);
   await conyuge.save();
   return res.status(201).json({
     ok: true,
     msg: "Conyuge Creado",
-    conyuge,
+    data: conyuge,
   });
 };
 
@@ -61,6 +63,9 @@ const putConyuge = async (req = request, res = response) => {
   const { estado, usuario, ...data } = req.body;
   if (data.nombre) {
     data.nombre = data.nombre.toUpperCase();
+  }
+  if (data.apellido) {
+    data.apellido = data.apellido.toUpperCase();
   }
   data.usuario = req.usuario._id;
   const conyuge = await Conyuges.findByIdAndUpdate(id, data, { new: true });
@@ -73,20 +78,30 @@ const putConyuge = async (req = request, res = response) => {
 
 const deleteConyuge = async (req = request, res = response) => {
   const { id } = req.params;
-  const conyuge = await Conyuges.findByIdAndUpdate(
-    id,
-    {
-      estado: false,
-      usuario: req.usuario._id,
-    },
-    { new: true }
-  );
+  const { permanente } = req.body;
 
-  res.status(200).json({
-    ok: true,
-    msg: "Cónyuge Eliminado",
-    conyuge,
-  });
+  if (permanente) {
+    const conyuge = await Conyuges.findByIdAndDelete(id);
+    res.status(200).json({
+      ok: true,
+      msg: "Cónyuge Eliminado, Permanente",
+      conyuge,
+    });
+  } else {
+    const conyuge = await Conyuges.findByIdAndUpdate(
+      id,
+      {
+        estado: false,
+        usuario: req.usuario._id,
+      },
+      { new: true }
+    );
+    res.status(200).json({
+      ok: true,
+      msg: "Cónyuge Eliminado",
+      conyuge,
+    });
+  }
 };
 module.exports = {
   getConyuges,

@@ -4,7 +4,9 @@ const { Matrimonio, Conyuges } = require("../models");
 //Lista de Matrimonios
 const getMatrimonios = async (req = request, res = response) => {
   const { limite = 5, desde = 0 } = req.query;
-  const query = { activo: true };
+  const query = { activo: true, esMatrimonio: true };
+  const queryS = { activo: true, esMatrimonio: false };
+
   const [total, matrimonios] = await Promise.all([
     Matrimonio.countDocuments(query),
     Matrimonio.find(query)
@@ -15,11 +17,23 @@ const getMatrimonios = async (req = request, res = response) => {
       .populate("esposa")
       .populate("diocesis"),
   ]);
+
+  const [totalS, sacerdotes] = await Promise.all([
+    Matrimonio.countDocuments(queryS),
+    Matrimonio.find(queryS)
+      .skip(Number(desde))
+      .limit(Number(limite))
+      .populate("usuario", "nombre")
+      .populate("diocesis"),
+  ]);
+
   res.status(200).json({
     ok: true,
-    msg: "Lista de Matrimonios",
+    msg: "Lista de Registros",
     total,
     matrimonios,
+    totalS,
+    sacerdotes,
   });
 };
 //Obtener una Categoría por ID - público
@@ -48,11 +62,13 @@ const postMatrimonio = async (req = request, res = response) => {
   const matrimonioDB = await Matrimonio.find({
     $or: [{ esposo }, { esposa }],
   });
-  if (matrimonioDB.length !== 0) {
-    return res.status(400).json({
-      ok: false,
-      msg: `Alguno de los cónyuges ya se encuentra registrado`,
-    });
+  if (esposo && esposa) {
+    if (matrimonioDB.length !== 0) {
+      return res.status(400).json({
+        ok: false,
+        msg: `Alguno de los cónyuges ya se encuentra registrado`,
+      });
+    }
   }
   const data = {
     ...resto,
@@ -80,7 +96,7 @@ const postMatrimonio = async (req = request, res = response) => {
 
 const putMatrimonio = async (req = request, res = response) => {
   const { id } = req.params;
-  const { esposo, esposa, activo, ...resto } = req.body;
+  const { esposo, esposa, ...resto } = req.body;
 
   const data = {
     ...resto,
@@ -93,7 +109,7 @@ const putMatrimonio = async (req = request, res = response) => {
   res.status(200).json({
     ok: true,
     msg: "Matrimonio actualizado",
-    matrimonio,
+    data: matrimonio,
   });
 };
 

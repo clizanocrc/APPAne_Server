@@ -50,12 +50,12 @@ const MatrimonioSchema = Schema({
   esposo: {
     type: Schema.Types.ObjectId,
     ref: "Conyuges",
-    required: true,
+    // required: true,
   },
   esposa: {
     type: Schema.Types.ObjectId,
     ref: "Conyuges",
-    required: true,
+    // required: true,
   },
   usuario: {
     type: Schema.Types.ObjectId,

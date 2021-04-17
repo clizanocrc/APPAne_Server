@@ -72,14 +72,13 @@ const putConyuge = async (req = request, res = response) => {
   res.status(200).json({
     ok: true,
     msg: "Cónyuge actualizado",
-    conyuge,
+    data: conyuge,
   });
 };
 
 const deleteConyuge = async (req = request, res = response) => {
   const { id } = req.params;
   const { permanente } = req.body;
-
   if (permanente) {
     const conyuge = await Conyuges.findByIdAndDelete(id);
     res.status(200).json({

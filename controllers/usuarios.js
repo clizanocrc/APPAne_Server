@@ -67,7 +67,7 @@ const deleteUsuarios = async (req = request, res = response) => {
   );
   res.status(200).json({
     ok: true,
-    msg: "Usuario Eliminado - Lógico",
+    msg: "Usuario Eliminado",
     usuario,
   });
 };
@@ -77,7 +77,7 @@ const deletePermUsuarios = async (req = request, res = response) => {
   //Solo en casos especiales para no alterar la entidad referencial de la base de datos
   const { id } = req.params;
   const usuarioAutenticado = req.usuario;
-  if (usuarioAutenticado.rol !== "ADMIN_ROLE") {
+  if (usuarioAutenticado.rol !== "SUPER_ADMIN_ROLE") {
     return res.status(401).json({
       ok: false,
       msg: "Usuario no autorizado para realizar esta acción",

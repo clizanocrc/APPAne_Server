@@ -21,6 +21,10 @@ const MatrimonioSchema = Schema({
     type: Date,
     default: null,
   },
+  fechaOrdenacion: {
+    type: Date,
+    default: null,
+  },
   direccion: {
     type: String,
     default: "",
@@ -36,7 +40,7 @@ const MatrimonioSchema = Schema({
   bloque: {
     type: String,
     default: "Primero",
-    emun: ["Primero", "Segundo", "Tercero"],
+    emun: ["Primero", "Segundo", "Tercero", "Honorario"],
   },
   esMatrimonio: {
     type: Boolean,

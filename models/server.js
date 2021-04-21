@@ -21,6 +21,7 @@ class Server {
       uploadsimg: "/api/uploadsimg",
       uploadsfile: "/api/uploadsfile",
       usuarios: "/api/usuarios",
+      events: "/api/events",
     };
     //Conectar Base de Datos
     this.databaseConnect();
@@ -65,6 +66,7 @@ class Server {
     this.app.use(this.paths.uploadsimg, require("../routes/uploadsimg"));
     this.app.use(this.paths.uploadsfile, require("../routes/uploadsfile"));
     this.app.use(this.paths.usuarios, require("../routes/usuarios"));
+    this.app.use(this.paths.events, require("../routes/events"));
   }
 
   //Inicia la escucha del puerto

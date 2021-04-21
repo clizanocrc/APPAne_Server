@@ -1,3 +1,8 @@
+/*
+    Rutas de Matrimonios / matrimonios
+    host + /api/matrimonios
+*/
+
 const { Router } = require("express");
 const { check } = require("express-validator");
 const {

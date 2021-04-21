@@ -8,6 +8,7 @@ const search = require("./search");
 const usuarios = require("./usuarios");
 const uploadsCloudinary = require("./uploads-cloudinary");
 const _1010 = require("./1010");
+const events = require("./events");
 
 module.exports = {
   ..._1010,
@@ -16,6 +17,7 @@ module.exports = {
   ...documentos,
   ...matrimonios,
   ...diocesis,
+  ...events,
   ...params,
   ...search,
   ...usuarios,

@@ -2,10 +2,21 @@ const { response } = require("express");
 const Evento = require("../models/Evento");
 
 const getEventos = async (req, res = response) => {
-  const eventos = await Evento.find();
+  const { limite = 5, desde = 0 } = req.query;
+  const query = { activo: true };
 
-  return res.status(201).json({
+  const [total, eventos] = await Promise.all([
+    Evento.countDocuments(query),
+    Evento.find(query)
+      .skip(Number(desde))
+      .limit(Number(limite))
+      .populate("user", "nombre"),
+  ]);
+
+  return res.status(200).json({
     ok: true,
+    msg: "Lista de Eventos",
+    total,
     eventos,
   });
 };

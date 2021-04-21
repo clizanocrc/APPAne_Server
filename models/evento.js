@@ -16,6 +16,10 @@ const EventoSchema = Schema({
     type: Date,
     required: true,
   },
+  activo: {
+    type: Boolean,
+    default: true,
+  },
   user: {
     type: Schema.Types.ObjectId,
     ref: "Usuario",

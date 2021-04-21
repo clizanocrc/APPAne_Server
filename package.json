@@ -1,7 +1,7 @@
 {
-  "name": "07-rest-server",
+  "name": "app-ane-server",
   "version": "1.0.0",
-  "description": "",
+  "description": "Servidor REST appAne, servicio sin fines de lucro",
   "main": "app.js",
   "scripts": {
     "start": "node app"

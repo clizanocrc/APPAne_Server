@@ -4,7 +4,8 @@
   "description": "Servidor REST appAne, servicio sin fines de lucro",
   "main": "app.js",
   "scripts": {
-    "start": "node app"
+    "start": "node app.js",
+    "dev": "nodemon app.js"
   },
   "keywords": [],
   "author": "",

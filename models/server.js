@@ -21,7 +21,7 @@ class Server {
       uploadsimg: "/api/uploadsimg",
       uploadsfile: "/api/uploadsfile",
       usuarios: "/api/usuarios",
-      calendario: "/api/calendario",
+      // calendario: "/api/calendario",
     };
     //Conectar Base de Datos
     this.databaseConnect();

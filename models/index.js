@@ -8,6 +8,7 @@ const Param = require("./param");
 const Role = require("./role");
 const Server = require("./server");
 const Usuario = require("./usuario");
+const Evento = require("./evento");
 
 module.exports = {
   _1010,
@@ -20,4 +21,5 @@ module.exports = {
   Role,
   Server,
   Usuario,
+  Evento,
 };

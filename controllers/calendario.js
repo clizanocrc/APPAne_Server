@@ -1,7 +1,8 @@
-const { response } = require("express");
-const Evento = require("../models/Evento");
+const { response, request } = require("express");
+const { Evento } = require("../models");
 
-const getEventos = async (req, res = response) => {
+//Lista de Eventos
+const getEventos = async (req = request, res = response) => {
   const { limite = 5, desde = 0 } = req.query;
   const query = { activo: true };
 
@@ -22,7 +23,13 @@ const getEventos = async (req, res = response) => {
 };
 
 const newEvento = async (req, res = response) => {
-  const evento = new Evento(req.body);
+  const { user, ...resto } = req.body;
+  const data = {
+    ...resto,
+    user: user._id,
+  };
+  console.log(data);
+  const evento = new Evento(data);
   try {
     evento.user = req.usuario._id;
     const eventoSave = await evento.save();

@@ -9,6 +9,7 @@ const getEventos = async (req = request, res = response) => {
   const [total, eventos] = await Promise.all([
     Evento.countDocuments(query),
     Evento.find(query)
+      .sort({ end: 1 })
       .skip(Number(desde))
       .limit(Number(limite))
       .populate("user", "nombre"),

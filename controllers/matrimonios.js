@@ -10,6 +10,7 @@ const getMatrimonios = async (req = request, res = response) => {
   const [total, matrimonios] = await Promise.all([
     Matrimonio.countDocuments(query),
     Matrimonio.find(query)
+      .sort({ nombrematrimonio: 1 })
       .skip(Number(desde))
       .limit(Number(limite))
       .populate("usuario", "nombre")

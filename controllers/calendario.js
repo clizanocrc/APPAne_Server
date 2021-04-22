@@ -13,7 +13,7 @@ const getEventos = async (req, res = response) => {
       .populate("user", "nombre"),
   ]);
 
-  return res.status(200).json({
+  res.status(200).json({
     ok: true,
     msg: "Lista de Eventos",
     total,
@@ -73,7 +73,7 @@ const updateEvento = async (req, res = response) => {
       { new: true }
     );
 
-    return res.status(200).json({
+    res.status(200).json({
       ok: true,
       evento: eventoActualizado.populate("user", "nombre"),
       msg: "Evento Actualizado",

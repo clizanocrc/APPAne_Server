@@ -14,6 +14,8 @@ const {
   putUsuarios,
   deleteUsuarios,
   deletePermUsuarios,
+  patchUsuarios,
+  patchUsuariosPass,
 } = require("../controllers");
 
 const { validaRol, existeCorreo, existeUsuarioID } = require("../helpers");
@@ -78,6 +80,33 @@ router.delete(
   deletePermUsuarios
 );
 
-// router.patch("/", patchUsuarios);
+router.patch(
+  "/:id",
+  [
+    validarJWT,
+    check("id", "No es un ID válido").isMongoId(),
+    check("id").custom(existeUsuarioID),
+    check("correo", "El correo no es válido").isEmail(),
+    validarCampos,
+  ],
+  patchUsuarios
+);
+
+router.patch(
+  "/pass/:id",
+  [
+    validarJWT,
+    check("id", "No es un ID válido").isMongoId(),
+    check("id").custom(existeUsuarioID),
+    check(
+      "passNew",
+      "El nuevo password debe tener más de 6 caracteres"
+    ).isLength({
+      min: 6,
+    }),
+    validarCampos,
+  ],
+  patchUsuariosPass
+);
 
 module.exports = router;

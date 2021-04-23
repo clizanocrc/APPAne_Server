@@ -1,6 +1,6 @@
 const { request, response } = require("express");
 const { Usuario } = require("../models");
-const { encriptaPassword, generarJWT } = require("../helpers");
+const { encriptaPassword, generarJWT, validaPassword } = require("../helpers");
 
 const getUsuarios = async (req = request, res = response) => {
   const { limite = 5, desde = 0 } = req.query;
@@ -37,11 +37,8 @@ const postUsuarios = async (req = request, res = response) => {
 const putUsuarios = async (req = request, res = response) => {
   const { id } = req.params;
   //Estas son extracciones del objeto que no quiero actualizar
-  //las otras propiedades se setean en resto
-  const { _id, password, google, correo, ...resto } = req.body;
-  if (password) {
-    resto.password = encriptaPassword(password);
-  }
+  //las otras propiedades se setean en el resto
+  const { _id, password, ...resto } = req.body;
   const usuario = await Usuario.findByIdAndUpdate(id, resto, { new: true });
   res.status(200).json({
     ok: true,
@@ -84,19 +81,58 @@ const deletePermUsuarios = async (req = request, res = response) => {
   });
 };
 
-const patchUsuarios = (req = request, res = response) => {
+//Solo cambia Nombre, Correo
+const patchUsuarios = async (req = request, res = response) => {
+  const { id } = req.params;
+  const { correo, name } = req.body;
+  //Verificar el usuario en la base de datos
+  const usuario = await Usuario.findByIdAndUpdate(
+    id,
+    { correo: correo, nombre: name },
+    { new: true }
+  );
+  console.log(usuario);
   res.status(200).json({
     ok: true,
-    msg: "patch - controlador: respuesta del API",
-    data: {},
+    msg: "Perfil actualizado",
+    usuario,
   });
 };
 
+//Solo Actualiza la Contraseña
+const patchUsuariosPass = async (req = request, res = response) => {
+  const { id } = req.params;
+  const { passActual, passNew, rePassNew } = req.body;
+  const usuario = await Usuario.findById(id);
+  //Verificar las contraseñas
+  if (!validaPassword(passActual, usuario.password)) {
+    return res.status(400).json({
+      ok: false,
+      msg: "Verificar Contraseña Actual",
+      usuario: {},
+    });
+  }
+  if (passNew !== rePassNew) {
+    return res.status(400).json({
+      ok: false,
+      msg: "Confirmación de nueva Contraseña falló",
+      usuario: {},
+    });
+  }
+  usuario.password = encriptaPassword(passNew);
+  await usuario.save();
+  res.status(200).json({
+    ok: true,
+    msg: "Contraseña actualizada",
+    usuario,
+  });
+};
 module.exports = {
   getUsuarios,
   postUsuarios,
   putUsuarios,
   deleteUsuarios,
   patchUsuarios,
+  patchUsuariosPass,
   deletePermUsuarios,
 };

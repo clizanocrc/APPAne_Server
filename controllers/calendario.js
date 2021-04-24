@@ -3,13 +3,19 @@ const { Evento } = require("../models");
 
 //Lista de Eventos
 const getEventos = async (req = request, res = response) => {
-  const { limite = 5, desde = 0 } = req.query;
+  const { limite = 5, desde = 0, orden = "asc" } = req.query;
   const query = { activo: true };
+  let order;
+  if (orden === "asc") {
+    order = 1;
+  } else {
+    order = -1;
+  }
 
   const [total, eventos] = await Promise.all([
     Evento.countDocuments(query),
     Evento.find(query)
-      .sort({ end: 1 })
+      .sort({ end: order })
       .skip(Number(desde))
       .limit(Number(limite))
       .populate("user", "nombre"),

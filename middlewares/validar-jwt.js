@@ -9,7 +9,7 @@ const validarJWT = async (req = request, res = response, next) => {
   if (!token) {
     return res.status(401).json({
       ok: false,
-      msg: "No hay token en la solicitud",
+      msg: "No hay token de sesión en la solicitud",
     });
   }
 
@@ -22,14 +22,14 @@ const validarJWT = async (req = request, res = response, next) => {
     if (!usuario) {
       return res.status(400).json({
         ok: false,
-        msg: "Token no válido - usuario no existe",
+        msg: "Sesión no válida - usuario no existe",
       });
     }
     //Verificar que el uisuario este activo
     if (!usuario.estado) {
       return res.status(401).json({
         ok: false,
-        msg: "Token no válido - inactivo",
+        msg: "Sesión no válida - usuario inactivo",
       });
     }
     req.usuario = usuario;
@@ -39,7 +39,8 @@ const validarJWT = async (req = request, res = response, next) => {
     console.log(error);
     res.status(401).json({
       ok: false,
-      msg: "Token no Válido",
+      // msg: "Token no Válido",
+      msg: "Sesión expirada",
     });
   }
   next();

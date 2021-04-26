@@ -20,6 +20,7 @@ const getUsuarios = async (req = request, res = response) => {
 const postUsuarios = async (req = request, res = response) => {
   const { nombre, correo, password, rol } = req.body;
   const usuario = new Usuario({ nombre, correo, password, rol });
+  usuario.correo = correo.toLowerCase();
   //Encriptar la contraseña
   usuario.password = encriptaPassword(password);
   //Guardar en DB

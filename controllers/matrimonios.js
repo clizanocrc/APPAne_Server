@@ -112,6 +112,25 @@ const putMatrimonio = async (req = request, res = response) => {
     msg: "Matrimonio actualizado",
     data: matrimonio,
   });
+
+  if (!matrimonio.activo) {
+    await Conyuges.findByIdAndUpdate(
+      matrimonio.esposo._id,
+      {
+        estado: false,
+        usuario: req.usuario._id,
+      },
+      { new: true }
+    );
+    await Conyuges.findByIdAndUpdate(
+      matrimonio.esposa._id,
+      {
+        estado: false,
+        usuario: req.usuario._id,
+      },
+      { new: true }
+    );
+  }
 };
 
 const deleteMatrimonio = async (req = request, res = response) => {
@@ -125,12 +144,30 @@ const deleteMatrimonio = async (req = request, res = response) => {
     { new: true }
   );
 
+  const esposo = await Conyuges.findByIdAndUpdate(
+    matrimonio.esposo._id,
+    {
+      estado: false,
+      usuario: req.usuario._id,
+    },
+    { new: true }
+  );
+  const esposa = await Conyuges.findByIdAndUpdate(
+    matrimonio.esposa._id,
+    {
+      estado: false,
+      usuario: req.usuario._id,
+    },
+    { new: true }
+  );
+
   res.status(200).json({
     ok: true,
     msg: "Matrimonio Eliminado",
     matrimonio,
   });
 };
+
 module.exports = {
   getMatrimonios,
   getMatrimoniobyID,

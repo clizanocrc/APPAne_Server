@@ -10,7 +10,7 @@ class Server {
     //variables
     this.port = process.env.PORT;
     this.paths = {
-      _1010: "/api/1010",
+      blogs: "/api/blogs",
       auth: "/api/auth",
       conyuges: "/api/conyuges",
       diocesis: "/api/diocesis",
@@ -55,7 +55,7 @@ class Server {
   //metodos
   routes() {
     //Rutas
-    this.app.use(this.paths._1010, require("../routes/1010"));
+    this.app.use(this.paths.blogs, require("../routes/blogs"));
     this.app.use(this.paths.auth, require("../routes/auth"));
     this.app.use(this.paths.conyuges, require("../routes/conyuges"));
     this.app.use(this.paths.diocesis, require("../routes/diocesis"));
@@ -67,6 +67,7 @@ class Server {
     this.app.use(this.paths.uploadsfile, require("../routes/uploadsfile"));
     this.app.use(this.paths.usuarios, require("../routes/usuarios"));
     this.app.use(this.paths.calendario, require("../routes/calendario"));
+    this.app.use(this.paths.blogs, require("../routes/blogs"));
   }
 
   //Inicia la escucha del puerto

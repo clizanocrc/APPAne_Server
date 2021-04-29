@@ -7,11 +7,11 @@ const params = require("./param");
 const search = require("./search");
 const usuarios = require("./usuarios");
 const uploadsCloudinary = require("./uploads-cloudinary");
-const _1010 = require("./1010");
+const blogs = require("./blogs");
 const calendario = require("./calendario");
 
 module.exports = {
-  ..._1010,
+  ...blogs,
   ...auth,
   ...conyuges,
   ...documentos,

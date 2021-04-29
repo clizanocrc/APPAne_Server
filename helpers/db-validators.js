@@ -4,8 +4,9 @@ const {
   Diocesis,
   Matrimonio,
   Conyuges,
-  _1010,
   Documentos,
+  Blogentrada,
+  Blogcomentario,
 } = require("../models");
 const { generos, bloques } = require("../search/colecciones");
 
@@ -68,10 +69,24 @@ const existeDocumentoID = async (id = "") => {
   }
 };
 
-const existe1010ID = async (id = "") => {
-  const _1010Id = await _1010.findById(id);
-  if (!_1010Id) {
-    throw new Error(`El 1010 no Existe, id: ${id}`);
+// const existe1010ID = async (id = "") => {
+//   const _1010Id = await _1010.findById(id);
+//   if (!_1010Id) {
+//     throw new Error(`El 1010 no Existe, id: ${id}`);
+//   }
+// };
+
+const existeBlogID = async (id = "") => {
+  const blogentrada = await Blogentrada.findById(id);
+  if (!blogentrada) {
+    throw new Error(`El Blog no Existe, id: ${id}`);
+  }
+};
+
+const existeBlogCommentID = async (id = "") => {
+  const blogcomentario = await Blogcomentario.findById(id);
+  if (!blogcomentario) {
+    throw new Error(`El Comentario no Existe, id: ${id}`);
   }
 };
 
@@ -108,7 +123,8 @@ const validaBloque = (bloque = "") => {
 
 module.exports = {
   validaRol,
-  existe1010ID,
+  existeBlogCommentID,
+  existeBlogID,
   existeCorreo,
   existeDiocesisID,
   existeDocumentoID,

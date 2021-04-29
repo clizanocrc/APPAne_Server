@@ -14,6 +14,7 @@ const colecciones = [
   "usuarios",
   "1010",
   "documentos",
+  "blogentrada",
 ];
 
 module.exports = { coleccionesSearch, generos, bloques, colecciones };

@@ -5,11 +5,13 @@ const {
   Conyuges,
   _1010,
   Documentos,
+  Blogentrada,
 } = require("../models");
 
 const retornarModelo = async (req = request, res = response) => {
   const { coleccion, id } = req.params;
   let modelo = [];
+  console.log(coleccion);
   switch (coleccion) {
     case "matrimonios":
       modelo = await Matrimonio.findById(id);
@@ -53,6 +55,15 @@ const retornarModelo = async (req = request, res = response) => {
         return res.status(400).json({
           ok: false,
           msg: `Documento con id: ${id} no existe`,
+        });
+      }
+      break;
+    case "blogentrada":
+      modelo = await Blogentrada.findById(id);
+      if (!modelo) {
+        return res.status(400).json({
+          ok: false,
+          msg: `Blog con id: ${id} no existe`,
         });
       }
       break;

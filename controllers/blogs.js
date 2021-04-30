@@ -3,7 +3,7 @@ const moment = require("moment");
 const { Blogentrada, BlogLike, Blogcomentario } = require("../models");
 
 const getBlogs = async (req = request, res = response) => {
-  const { limite = 5, desde = 0 } = req.query;
+  const { limite = 1000, desde = 0 } = req.query;
   const query = { estado: true };
   const [total, blogs, comentarios, likes] = await Promise.all([
     Blogentrada.countDocuments(query),
@@ -14,6 +14,7 @@ const getBlogs = async (req = request, res = response) => {
       .populate("usuario", "nombre")
       .populate("categoria", "descripcion"),
     Blogcomentario.find(query)
+      .sort({ _id: -1 })
       .skip(Number(desde))
       .limit(Number(limite))
       .populate("usuario", "nombre"),
@@ -112,7 +113,7 @@ const deleteBlog = async (req = request, res = response) => {
 };
 
 const postLike = async (req = request, res = response) => {
-  const { limite = 5, desde = 0 } = req.query;
+  const { limite = 10000, desde = 0 } = req.query;
   const { id } = req.params;
   const data = {
     blogentrada: id,
@@ -128,10 +129,8 @@ const postLike = async (req = request, res = response) => {
     const votos = blogentrada.votos + 1;
     blogentrada.votos = votos;
     await blogentrada.save();
-    likes = await BlogLike.find()
-      .skip(Number(desde))
-      .limit(Number(limite))
-      .populate("usuario");
+
+    likes = await BlogLike.find().populate("usuario");
 
     res.status(200).json({
       ok: true,
@@ -149,10 +148,8 @@ const postLike = async (req = request, res = response) => {
       blogentrada.votos = votos;
       await blogentrada.save();
     }
-    likes = await BlogLike.find()
-      .skip(Number(desde))
-      .limit(Number(limite))
-      .populate("usuario");
+
+    likes = await BlogLike.find().populate("usuario");
 
     res.status(200).json({
       ok: true,
@@ -164,6 +161,8 @@ const postLike = async (req = request, res = response) => {
 };
 
 const postcomentario = async (req = request, res = response) => {
+  const { limite = 1000, desde = 0 } = req.query;
+
   const { id } = req.params;
   const { comentario } = req.body;
 
@@ -175,11 +174,16 @@ const postcomentario = async (req = request, res = response) => {
 
   const blogcomentario = new Blogcomentario(data);
   await blogcomentario.save();
+  const comentarios = await Blogcomentario.find()
+    .sort({ _id: -1 })
+    .skip(Number(desde))
+    .limit(Number(limite))
+    .populate("usuario", "nombre");
 
   return res.status(201).json({
     ok: true,
-    msg: "Blog Creado",
-    blogcomentario: blogcomentario,
+    msg: "Gracias por sus comentarios",
+    comentarios: comentarios,
   });
 };
 

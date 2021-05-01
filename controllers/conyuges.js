@@ -34,13 +34,18 @@ const postConyuge = async (req = request, res = response) => {
   const { estado, usuario, ...body } = req.body;
   //TODO: buscar que el conyuge exista no tiene sentido
 
-  const conyugeDB = await Conyuges.findOne({ nombre: body.nombre });
-  if (conyugeDB) {
-    return res.status(400).json({
-      ok: false,
-      msg: `Cónyuge ${conyugeDB.nombre} ya existe`,
-    });
-  }
+  // const conyugeDB = await Conyuges.findOne({
+  //   nombre: body.nombre,
+  //   correo: body.correo,
+  // });
+
+  // if (conyugeDB) {
+  //   return res.status(400).json({
+  //     ok: false,
+  //     msg: `Cónyuge ${conyugeDB.nombre} con el correo ${conyugeDB.correo} ya existe`,
+  //   });
+  // }
+
   const data = {
     ...body,
     nombre: body.nombre.toUpperCase(),

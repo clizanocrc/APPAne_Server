@@ -7,7 +7,7 @@ const coleccionesSearch = [
 ];
 
 const generos = ["F", "M"];
-const bloques = ["Primero", "Segundo", "Tercero"];
+const bloques = ["Primero", "Segundo", "Tercero", "Honorario"];
 const colecciones = [
   "matrimonios",
   "conyuges",

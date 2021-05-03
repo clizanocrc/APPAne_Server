@@ -1,12 +1,17 @@
 const { request, response } = require("express");
 const moment = require("moment");
-const { Blogentrada, BlogLike, Blogcomentario } = require("../models");
+const {
+  Blogentrada,
+  BlogLike,
+  Blogcomentario,
+  Blogcategoria,
+} = require("../models");
 const blogComentario = require("../models/blogComentario");
 // Blog
 const getBlogs = async (req = request, res = response) => {
   const { limite = 1000, desde = 0 } = req.query;
   const query = { estado: true };
-  const [total, blogs, comentarios, likes] = await Promise.all([
+  const [total, blogs, comentarios, likes, categorias] = await Promise.all([
     Blogentrada.countDocuments(query),
     Blogentrada.find(query)
       .sort({ fechaPubli: -1 })
@@ -23,7 +28,10 @@ const getBlogs = async (req = request, res = response) => {
       .skip(Number(desde))
       .limit(Number(limite))
       .populate("usuario"),
-    // .populate("usuario", "images"),
+    Blogcategoria.find(query)
+      .sort({ descripcion: 1 })
+      .skip(Number(desde))
+      .limit(Number(limite)),
   ]);
   res.status(200).json({
     ok: true,
@@ -32,6 +40,7 @@ const getBlogs = async (req = request, res = response) => {
     blogs,
     comentarios,
     likes,
+    categorias,
   });
 };
 

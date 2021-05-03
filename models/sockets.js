@@ -18,6 +18,10 @@ class Sockets {
         return socket.disconnect();
       }
       const usuario = await usuarioConectado(uid, true);
+      //Unir el usuario a una sala de socket
+      //Se une a la sala con el mismo id por si se le quiere enviar
+      //un mensaje personalizado
+      socket.join(uid);
       console.log(usuario.nombre, "se conectó");
       this.io.emit("lista-usuarios", await getUsuariosOnline());
 

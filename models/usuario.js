@@ -26,6 +26,10 @@ const UsuarioSchema = Schema({
     type: Boolean,
     default: true,
   },
+  conectado: {
+    type: Boolean,
+    default: false,
+  },
 });
 
 UsuarioSchema.methods.toJSON = function () {

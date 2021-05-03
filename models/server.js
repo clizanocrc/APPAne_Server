@@ -1,14 +1,14 @@
 const express = require("express");
+const http = require("http");
+const socketio = require("socket.io");
 const cors = require("cors");
 const fileUpload = require("express-fileupload");
 const { dbConnection } = require("../database/configDB");
+const Sockets = require("./sockets");
 
 class Server {
   constructor() {
-    //Inicio de express
-    this.app = express();
-    //variables
-    this.port = process.env.PORT;
+    //Paths del Servidor
     this.paths = {
       blogs: "/api/blogs",
       auth: "/api/auth",
@@ -23,6 +23,16 @@ class Server {
       usuarios: "/api/usuarios",
       calendario: "/api/calendario",
     };
+    //Inicio de express
+    this.app = express();
+    //variables
+    this.port = process.env.PORT;
+    //Servidor
+    this.server = http.createServer(this.app);
+    //Sockets
+    this.io = socketio(this.server, {
+      /*Configuraciones de los Sockets */
+    });
     //Conectar Base de Datos
     this.databaseConnect();
     //Midelewares: Funciones que agregan funcionalidad al servidor
@@ -33,6 +43,11 @@ class Server {
 
   async databaseConnect() {
     await dbConnection();
+  }
+
+  // metodos de los Sockets
+  sockets() {
+    new Sockets(this.io);
   }
 
   midelewares() {
@@ -52,7 +67,6 @@ class Server {
     );
   }
 
-  //metodos
   routes() {
     //Rutas
     this.app.use(this.paths.blogs, require("../routes/blogs"));
@@ -70,10 +84,11 @@ class Server {
     this.app.use(this.paths.blogs, require("../routes/blogs"));
   }
 
-  //Inicia la escucha del puerto
+  //Inicia las escuchas del puerto
   startListem() {
-    this.app.listen(this.port, () => {
-      console.log(`Servidor corriendo en el puerto: ${this.port}`);
+    this.sockets();
+    this.server.listen(this.port, () => {
+      console.log(`Server REST & Sockets run in PORT: ${this.port}`);
     });
   }
 }

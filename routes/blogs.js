@@ -8,6 +8,8 @@ const {
   deleteBlog,
   postLike,
   postcomentario,
+  putComentario,
+  deleteComentario,
 } = require("../controllers");
 const { existeBlogID, existeBlogCommentID } = require("../helpers");
 const { validarJWT, validarCampos, esAdminRole } = require("../middlewares");
@@ -96,7 +98,7 @@ router.put(
     check("id").custom(existeBlogCommentID),
     validarCampos,
   ],
-  putBlog
+  putComentario
 );
 
 router.delete(
@@ -108,7 +110,7 @@ router.delete(
     check("id").custom(existeBlogCommentID),
     validarCampos,
   ],
-  deleteBlog
+  deleteComentario
 );
 
 module.exports = router;

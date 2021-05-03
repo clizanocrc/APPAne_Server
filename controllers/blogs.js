@@ -1,7 +1,8 @@
 const { request, response } = require("express");
 const moment = require("moment");
 const { Blogentrada, BlogLike, Blogcomentario } = require("../models");
-
+const blogComentario = require("../models/blogComentario");
+// Blog
 const getBlogs = async (req = request, res = response) => {
   const { limite = 1000, desde = 0 } = req.query;
   const query = { estado: true };
@@ -111,7 +112,7 @@ const deleteBlog = async (req = request, res = response) => {
     blog: blogentrada,
   });
 };
-
+// Likers
 const postLike = async (req = request, res = response) => {
   const { limite = 10000, desde = 0 } = req.query;
   const { id } = req.params;
@@ -159,10 +160,9 @@ const postLike = async (req = request, res = response) => {
     });
   }
 };
-
+// Comentarios
 const postcomentario = async (req = request, res = response) => {
   const { limite = 1000, desde = 0 } = req.query;
-
   const { id } = req.params;
   const { comentario } = req.body;
 
@@ -187,6 +187,60 @@ const postcomentario = async (req = request, res = response) => {
   });
 };
 
+const putComentario = async (req = request, res = response) => {
+  const { limite = 1000, desde = 0 } = req.query;
+  const query = { estado: true };
+  const { id } = req.params;
+  const { comentario, blogentrada } = req.body;
+  const comentarioDB = await Blogcomentario.findById(id);
+
+  if (!comentarioDB) {
+    return res.status(400).json({
+      ok: false,
+      msg: `Comentario no Existe`,
+    });
+  }
+  const data = { comentario, blogentrada, usuario: req.usuario._id };
+  await Blogcomentario.findByIdAndUpdate(id, data, {
+    new: true,
+  });
+  const comentarios = await Blogcomentario.find(query)
+    .sort({ _id: -1 })
+    .skip(Number(desde))
+    .limit(Number(limite))
+    .populate("usuario", "nombre");
+
+  return res.status(201).json({
+    ok: true,
+    msg: "Comentario Actualizado",
+    comentarios: comentarios,
+  });
+};
+
+const deleteComentario = async (req = request, res = response) => {
+  const { limite = 1000, desde = 0 } = req.query;
+  const query = { estado: true };
+  const { id } = req.params;
+  const blogcomentario = await blogComentario.findByIdAndUpdate(
+    id,
+    {
+      estado: false,
+      usuario: req.usuario._id,
+    },
+    { new: true }
+  );
+  const comentarios = await Blogcomentario.find(query)
+    .sort({ _id: -1 })
+    .skip(Number(desde))
+    .limit(Number(limite))
+    .populate("usuario", "nombre");
+  res.status(200).json({
+    ok: true,
+    msg: "Comentario Eliminado",
+    comentarios: comentarios,
+  });
+};
+
 module.exports = {
   getBlogs,
   getBlogByID,
@@ -195,5 +249,7 @@ module.exports = {
   deleteBlog,
   postLike,
   postcomentario,
+  putComentario,
+  deleteComentario,
 };
 1010;

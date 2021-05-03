@@ -28,7 +28,18 @@ function parseJwt(token) {
   return JSON.parse(window.atob(base64));
 }
 
+const verificarJWT = (token = "") => {
+  try {
+    const { uid } = jwt.verify(token, process.env.SECRET_JWT_SEED);
+    return [true, uid];
+  } catch (error) {
+    console.log(error);
+    return [false, null];
+  }
+};
+
 module.exports = {
   generarJWT,
   parseJwt,
+  verificarJWT,
 };

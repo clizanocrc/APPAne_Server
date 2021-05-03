@@ -172,6 +172,7 @@ const postLike = async (req = request, res = response) => {
 // Comentarios
 const postcomentario = async (req = request, res = response) => {
   const { limite = 1000, desde = 0 } = req.query;
+  const query = { estado: true };
   const { id } = req.params;
   const { comentario } = req.body;
 
@@ -183,7 +184,7 @@ const postcomentario = async (req = request, res = response) => {
 
   const blogcomentario = new Blogcomentario(data);
   await blogcomentario.save();
-  const comentarios = await Blogcomentario.find()
+  const comentarios = await Blogcomentario.find(query)
     .sort({ _id: -1 })
     .skip(Number(desde))
     .limit(Number(limite))

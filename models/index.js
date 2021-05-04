@@ -1,17 +1,16 @@
-const Server = require("./server");
-const Conyuges = require("./conyuges");
-const Diocesis = require("./diocesis");
-const Documentos = require("./documentos");
-const Matrimonio = require("./matrimonio");
-const Mensajes = require("./mensajes");
-const Param = require("./param");
-const Role = require("./role");
-const Usuario = require("./usuario");
-const Evento = require("./evento");
 const Blogentrada = require("./blogEntrada");
 const Blogcategoria = require("./blogCategoria");
 const Blogcomentario = require("./blogComentario");
 const BlogLike = require("./blogLike");
+const Conyuges = require("./conyuges");
+const Diocesis = require("./diocesis");
+const Evento = require("./evento");
+const Matrimonio = require("./matrimonio");
+const Notificaciones = require("./notificaciones");
+const Param = require("./param");
+const Role = require("./role");
+const Server = require("./server");
+const Usuario = require("./usuario");
 
 module.exports = {
   Blogentrada,
@@ -20,12 +19,11 @@ module.exports = {
   BlogLike,
   Conyuges,
   Diocesis,
-  Documentos,
+  Evento,
   Matrimonio,
-  Mensajes,
+  Notificaciones,
   Param,
   Role,
   Server,
   Usuario,
-  Evento,
 };

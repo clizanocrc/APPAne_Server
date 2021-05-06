@@ -9,6 +9,7 @@ const usuarioConectado = async (uid, estado) => {
 
 const getUsuariosOnline = async () => {
   const query = { estado: true };
+
   const usuarios = await Usuario.find(query)
     .sort("-conectado")
     .sort({ nombre: 1 });

@@ -1,5 +1,5 @@
 const { Notificaciones, Usuario } = require("../models");
-const { enviarEmail } = require("../controllers/mail");
+// const { enviarEmail } = require("../controllers/mail");
 
 const getNotificacionesNuevas = (uid) => {};
 
@@ -55,11 +55,11 @@ const newNotificaciones = async (data, io) => {
     destinatarios.map(async (destino) => {
       const usuarioPara = await Usuario.findById(destino.uid);
       const usuarioDe = await Usuario.findById(data.de);
-      const emailData = {
-        emailPara: usuarioPara.correo,
-        nombreDe: usuarioDe.nombre,
-        msg: `Tiene un mensaje nuevo de ${usuarioDe.nombre} en el APPAne, <hr/> ${data.notes}`,
-      };
+      // const emailData = {
+      //   emailPara: usuarioPara.correo,
+      //   nombreDe: usuarioDe.nombre,
+      //   msg: `Tiene un mensaje nuevo de ${usuarioDe.nombre} en el APPAne, <hr/> ${data.notes}`,
+      // };
       const dataEnviar = {
         title: data.title,
         notes: data.notes,
@@ -71,7 +71,7 @@ const newNotificaciones = async (data, io) => {
       };
       const notificacion = new Notificaciones(dataEnviar);
       await notificacion.save();
-      await enviarEmail(emailData);
+      // await enviarEmail(emailData);
       await getNotificacionesTodas(destino.uid, io);
       io.to(destino.uid).emit("notifi-personal", {
         ok: true,

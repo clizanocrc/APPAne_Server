@@ -19,10 +19,8 @@ class Sockets {
         console.log("Socket no identificado");
         return socket.disconnect();
       }
+
       const usuario = await usuarioConectado(uid, true);
-      //Unir el usuario a una sala de socket
-      //Se une a la sala con el mismo id por si se le quiere enviar
-      //un mensaje personalizado
       socket.join(uid);
       console.log(usuario.nombre, "se conectó");
       this.io.emit("lista-usuarios", await getUsuariosOnline());
@@ -34,14 +32,17 @@ class Sockets {
         console.log(usuario.nombre, "se desconectó");
         this.io.emit("lista-usuarios", await getUsuariosOnline());
       });
+
       //Obtener Todas las Notificaciones
       socket.on("mis-notificaciones-todas", async (uid) => {
         await getNotificacionesTodas(uid, this.io);
       });
-      //Crear Notioficacion enviar-notificacion
 
+      //Crear Notioficacion enviar-notificacion
       socket.on("enviar-notificacion", async (data) => {
-        await newNotificaciones(data, this.io);
+        const resp = await newNotificaciones(data, this.io);
+        console.log(resp);
+        socket.emit("resp-notifi", resp);
       });
 
       socket.on("mensaje-to-server", (data) => {

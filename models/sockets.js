@@ -4,6 +4,7 @@ const {
   getUsuariosOnline,
   getNotificacionesTodas,
   newNotificaciones,
+  notificacionLeida,
 } = require("../controllers");
 
 class Sockets {
@@ -41,13 +42,12 @@ class Sockets {
       //Crear Notioficacion enviar-notificacion
       socket.on("enviar-notificacion", async (data) => {
         const resp = await newNotificaciones(data, this.io);
-        console.log(resp);
         socket.emit("resp-notifi", resp);
       });
 
-      socket.on("mensaje-to-server", (data) => {
-        console.log(data);
-        this.io.emit("mensaje-from-server", data);
+      socket.on("notificacion-leida", async (data) => {
+        const resp = await notificacionLeida(data, this.io);
+        socket.emit("resp-notifi-leida", resp);
       });
     });
   }

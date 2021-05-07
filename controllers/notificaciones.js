@@ -1,10 +1,8 @@
+const moment = require("moment");
 const { Notificaciones, Usuario } = require("../models");
 // const { enviarEmail } = require("../controllers/mail");
-
 const getNotificacionesNuevas = (uid) => {};
-
 const getNotificacionesLeidas = (uid) => {};
-
 const getNotificacionesTodas = async (uid, io) => {
   const query = { $or: [{ para: uid }, { de: uid }] };
   const queryDe = { de: uid };
@@ -17,10 +15,12 @@ const getNotificacionesTodas = async (uid, io) => {
   ] = await Promise.all([
     Notificaciones.countDocuments(query),
     Notificaciones.find(queryDe)
+      .sort({ leido: 1 })
       .sort({ fechaenviado: -1 })
       .populate({ path: "de", select: "nombre images" })
       .populate({ path: "para", select: "nombre images" }),
     Notificaciones.find(queryPara)
+      .sort({ leido: 1 })
       .sort({ fechaenviado: -1 })
       .populate({ path: "de", select: "nombre images" })
       .populate({ path: "para", select: "nombre images" }),
@@ -33,8 +33,8 @@ const getNotificacionesTodas = async (uid, io) => {
   };
   io.to(uid).emit("tus-notificaciones-todas", resp);
 };
-
 const newNotificaciones = async (data, io) => {
+  console.log(data);
   const { para } = data;
   try {
     if (para.length === 0) {
@@ -53,7 +53,7 @@ const newNotificaciones = async (data, io) => {
     }
     const destinatarios = data.para;
     destinatarios.map(async (destino) => {
-      const usuarioPara = await Usuario.findById(destino.uid);
+      // const usuarioPara = await Usuario.findById(destino.uid);
       const usuarioDe = await Usuario.findById(data.de);
       // const emailData = {
       //   emailPara: usuarioPara.correo,
@@ -79,6 +79,7 @@ const newNotificaciones = async (data, io) => {
         msg: "Ha recibido un nuevo mensaje de " + usuarioDe.nombre,
       });
     });
+    console.log("Enviando a", data.de);
     await getNotificacionesTodas(data.de, io);
 
     return {
@@ -94,12 +95,49 @@ const newNotificaciones = async (data, io) => {
     };
   }
 };
-
 const deleteNotificaciones = (props) => {};
-
 const editNotificacion = (props) => {};
+const notificacionLeida = async (data, io) => {
+  const { id, de, para } = data;
+  const emisor = de._id;
+  const receptor = para._id;
 
-const notificacionLeida = (props) => {};
+  const dataNew = {
+    id: data.id,
+    de: data.de,
+    fechaenviado: data.fechaenviado,
+    fechaleido: moment(),
+    leido: true,
+    notes: data.notes,
+    para: data.para,
+    title: data.title,
+  };
+
+  await Notificaciones.findByIdAndUpdate(id, dataNew, {
+    new: true,
+  });
+
+  const notifi = await Notificaciones.findById(id)
+    .populate({ path: "de", select: "nombre images" })
+    .populate({ path: "para", select: "nombre images" });
+
+  if (!notifi) {
+    return {
+      ok: false,
+      msg: "No encontré el mensaje",
+      error: null,
+    };
+  }
+
+  await getNotificacionesTodas(emisor, io);
+  await getNotificacionesTodas(receptor, io);
+  return {
+    ok: true,
+    msg: "Notificación leída",
+    error: null,
+    notificacion: notifi,
+  };
+};
 
 module.exports = {
   getNotificacionesNuevas,

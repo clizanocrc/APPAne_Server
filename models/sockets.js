@@ -5,6 +5,8 @@ const {
   getNotificacionesTodas,
   newNotificaciones,
   notificacionLeida,
+  grabarMessage,
+  obtenerChat,
 } = require("../controllers");
 
 class Sockets {
@@ -48,6 +50,17 @@ class Sockets {
       socket.on("notificacion-leida", async (data) => {
         const resp = await notificacionLeida(data, this.io);
         socket.emit("resp-notifi-leida", resp);
+      });
+
+      socket.on("mensaje-personal", async (payload) => {
+        const message = await grabarMessage(payload);
+        this.io.to(payload.para).emit("mensaje-personal", message);
+        this.io.to(payload.de).emit("mensaje-personal", message);
+      });
+
+      socket.on("obtener-chat", async (payload) => {
+        const chat = await obtenerChat(payload.miId, payload.mensajeDe);
+        this.io.to(payload.miId).emit("obtener-chat", chat);
       });
     });
   }

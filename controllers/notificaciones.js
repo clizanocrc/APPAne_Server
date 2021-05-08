@@ -1,8 +1,38 @@
 const moment = require("moment");
 const { Notificaciones, Usuario } = require("../models");
 // const { enviarEmail } = require("../controllers/mail");
-const getNotificacionesNuevas = (uid) => {};
-const getNotificacionesLeidas = (uid) => {};
+const getNotificacionesRecibidas = async (uid, io) => {
+  const query = { para: uid };
+  const notificacionesRecibidas = await Notificaciones.find(query)
+    .sort({
+      leido: 1,
+    })
+    .sort({ fechaenviado: -1 })
+    .populate({ path: "de", select: "nombre images" })
+    .populate({ path: "para", select: "nombre images" });
+
+  const resp = {
+    ok: true,
+    notificacionesRecibidas,
+  };
+  io.to(uid).emit("tus-notificaciones-recibidas", resp);
+};
+const getNotificacionesEnviadas = async (uid, io) => {
+  const query = { de: uid };
+  const notificacionesEnviadas = await Notificaciones.find(query)
+    .sort({
+      leido: 1,
+    })
+    .sort({ fechaenviado: -1 })
+    .populate({ path: "de", select: "nombre images" })
+    .populate({ path: "para", select: "nombre images" });
+
+  const resp = {
+    ok: true,
+    notificacionesEnviadas,
+  };
+  io.to(uid).emit("tus-notificaciones-enviadas", resp);
+};
 const getNotificacionesTodas = async (uid, io) => {
   const query = { $or: [{ para: uid }, { de: uid }] };
   const queryDe = { de: uid };
@@ -34,7 +64,7 @@ const getNotificacionesTodas = async (uid, io) => {
   io.to(uid).emit("tus-notificaciones-todas", resp);
 };
 const newNotificaciones = async (data, io) => {
-  console.log(data);
+  // console.log(data);
   const { para } = data;
   try {
     if (para.length === 0) {
@@ -52,9 +82,10 @@ const newNotificaciones = async (data, io) => {
       };
     }
     const destinatarios = data.para;
+    const usuarioDe = await Usuario.findById(data.de);
+
     destinatarios.map(async (destino) => {
       // const usuarioPara = await Usuario.findById(destino.uid);
-      const usuarioDe = await Usuario.findById(data.de);
       // const emailData = {
       //   emailPara: usuarioPara.correo,
       //   nombreDe: usuarioDe.nombre,
@@ -72,19 +103,20 @@ const newNotificaciones = async (data, io) => {
       const notificacion = new Notificaciones(dataEnviar);
       await notificacion.save();
       // await enviarEmail(emailData);
-      await getNotificacionesTodas(destino.uid, io);
+      await getNotificacionesRecibidas(destino.uid, io);
+      await getNotificacionesEnviadas(data.de, io);
       io.to(destino.uid).emit("notifi-personal", {
         ok: true,
         images: usuarioDe.images,
         msg: "Ha recibido un nuevo mensaje de " + usuarioDe.nombre,
       });
     });
-    console.log("Enviando a", data.de);
-    await getNotificacionesTodas(data.de, io);
+    // console.log("Enviando a", data.de);
+    // await getNotificacionesEnviadas(data.de, io);
 
     return {
       ok: true,
-      msg: "Notificaciones enviada",
+      msg: "Notificación enviada",
       error: null,
     };
   } catch (error) {
@@ -140,8 +172,8 @@ const notificacionLeida = async (data, io) => {
 };
 
 module.exports = {
-  getNotificacionesNuevas,
-  getNotificacionesLeidas,
+  getNotificacionesRecibidas,
+  getNotificacionesEnviadas,
   getNotificacionesTodas,
   newNotificaciones,
   deleteNotificaciones,

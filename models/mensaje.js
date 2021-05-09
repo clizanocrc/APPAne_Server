@@ -16,6 +16,10 @@ const MensajeSchema = Schema(
       type: String,
       required: true,
     },
+    leido: {
+      type: Boolean,
+      default: false,
+    },
   },
   {
     timestamps: true,

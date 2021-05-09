@@ -7,6 +7,8 @@ const {
   notificacionLeida,
   grabarMessage,
   obtenerChat,
+  chatLeido,
+  obtenerChatPendiente,
 } = require("../controllers");
 
 class Sockets {
@@ -16,8 +18,15 @@ class Sockets {
   }
 
   socketEvents() {
+    const chatSinLeer = async (destino, io) => {
+      const resp = await obtenerChatPendiente(destino);
+      io.to(destino).emit("chat-no-leido", resp);
+    };
+
     this.io.on("connection", async (socket) => {
+      //Coneccion del Usuario
       const [valido, uid] = verificarJWT(socket.handshake.query["x-token"]);
+
       if (!valido) {
         console.log("Socket no identificado");
         return socket.disconnect();
@@ -25,15 +34,21 @@ class Sockets {
 
       const usuario = await usuarioConectado(uid, true);
       socket.join(uid);
-      console.log(usuario.nombre, "se conectó");
-      this.io.emit("lista-usuarios", await getUsuariosOnline());
+      console.log(usuario.nombre, uid, "se conectó");
+      this.io.emit("lista-usuarios", await getUsuariosOnline(uid));
       await getNotificacionesTodas(uid, this.io);
+
+      //Entregar el chat no leído
+      await chatSinLeer(uid, this.io);
+
+      // const resp = await obtenerChatPendiente(uid);
+      // this.io.to(uid).emit("chat-no-leido", resp);
 
       //Desconeccion del Usuario
       socket.on("disconnect", async () => {
         const usuario = await usuarioConectado(uid, false);
         console.log(usuario.nombre, "se desconectó");
-        this.io.emit("lista-usuarios", await getUsuariosOnline());
+        this.io.emit("lista-usuarios", await getUsuariosOnline(uid));
       });
 
       //Obtener Todas las Notificaciones
@@ -41,26 +56,45 @@ class Sockets {
         await getNotificacionesTodas(uid, this.io);
       });
 
-      //Crear Notioficacion enviar-notificacion
+      //Crear Notificacion enviar-notificacion
       socket.on("enviar-notificacion", async (data) => {
         const resp = await newNotificaciones(data, this.io);
         socket.emit("resp-notifi", resp);
       });
-
+      //Marca una notificación como leída
       socket.on("notificacion-leida", async (data) => {
         const resp = await notificacionLeida(data, this.io);
         socket.emit("resp-notifi-leida", resp);
       });
 
-      socket.on("mensaje-personal", async (payload) => {
-        const message = await grabarMessage(payload);
-        this.io.to(payload.para).emit("mensaje-personal", message);
-        this.io.to(payload.de).emit("mensaje-personal", message);
-      });
+      //Chat
 
       socket.on("obtener-chat", async (payload) => {
-        const chat = await obtenerChat(payload.miId, payload.mensajeDe);
+        //Envia el chat de las dos personas involucradas
+        const chat = await obtenerChat(payload);
         this.io.to(payload.miId).emit("obtener-chat", chat);
+        await chatSinLeer(payload.miId, this.io);
+      });
+
+      socket.on("mensaje-personal", async (payload) => {
+        //Envia los mensajes entre las personas
+        const mensaje = await grabarMessage(payload);
+        this.io.to(payload.para).emit("mensaje-personal", mensaje);
+        this.io.to(payload.de).emit("mensaje-personal", mensaje);
+        await chatSinLeer(payload.para, this.io);
+      });
+
+      socket.on("chat-leido", async (payload) => {
+        //Marca un mensaje de chat como leído
+        const resp = await chatLeido(payload._id);
+        this.io.to(payload.para).emit("chat-leido", resp);
+        this.io.to(payload.de).emit("chat-leido", resp);
+        await chatSinLeer(payload.para, this.io);
+      });
+
+      socket.on("chat-no-leido", async (payload) => {
+        // Envía los mensajes pendientes
+        await chatSinLeer(payload._id, this.io);
       });
     });
   }

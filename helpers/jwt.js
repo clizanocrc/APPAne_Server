@@ -1,5 +1,5 @@
 const jwt = require("jsonwebtoken");
-const vidaToken = "4H";
+const vidaToken = "30d";
 
 // Genera Toquen
 const generarJWT = (uid = "") => {

@@ -57,6 +57,8 @@ class Server {
     //Servir la carpeta pública
     this.app.use(express.static("public"));
     //File Upload
+
+    
     this.app.use(
       fileUpload({
         useTempFiles: true,

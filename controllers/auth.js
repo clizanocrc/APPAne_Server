@@ -12,7 +12,7 @@ const login = async (req = request, res = response) => {
 
   try {
     // Verificar si el email existe
-    const usuario = await existeUsuarioDB(correo);
+    const usuario = await existeUsuarioDB(correo.trim());
     if (!usuario) {
       return res.status(400).json({
         ok: false,
